@@ -33,7 +33,9 @@ public class DisplayResultsFrame extends JFrame {
 	 
 	  public DisplayResultsFrame()  {  
 	    	 
-	          resultsPanel = new ResultsPanel();
+		  setLayout(new BorderLayout());
+	      resultsPanel = new ResultsPanel();
+	      
 	            
 	        
 	      
