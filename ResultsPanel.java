@@ -8,7 +8,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
 public class ResultsPanel extends JPanel {
 
 	public JComboBox<String> genderBox;
@@ -19,8 +18,7 @@ public class ResultsPanel extends JPanel {
 	
 	
 	public ResultsPanel() {
-		
-		
+			
 		
 		super.setLayout(new BorderLayout());
 		
@@ -29,13 +27,13 @@ public class ResultsPanel extends JPanel {
 		
 		//Handles JComboBoxes and Submit Button
 		JPanel resultsPanel = new JPanel();		
-		resultsPanel.setLayout(new GridLayout(3,2));
+		resultsPanel.setLayout(new GridLayout(2,3));
 		
 		JPanel picturePanel = new JPanel();
 		
-		genderBox = new JComboBox<String>(new String[] { "Male", "Female", "Self-Identified" });	
-		ageBox = new JComboBox<String>(new String[] { "0-10", "11-20", "21-30" , "31-40", "41-50" , "51-60" , "61-70" , "70+" });
-		emotionBox = new JComboBox<String>(new String[] { "Happy", "Proud" , "Angry" , "Sad", "Lonely" , "Beautiful" , "Dissapointed" });
+		genderBox = new JComboBox<String>(new String[] { "No Gender Filter" , "Male", "Female", "Self-Identified"  });	
+		ageBox = new JComboBox<String>(new String[] {"No Age Filter" , "0-10", "11-20", "21-30" , "31-40", "41-50" , "51-60" , "61-70" , "70+" });
+		emotionBox = new JComboBox<String>(new String[] {"No Emotion Filter" , "Happy", "Proud" , "Angry" , "Sad", "Lonely" , "Beautiful" , "Dissapointed" });
 		
 		JButton submitButton = new JButton("Submit");
 		
