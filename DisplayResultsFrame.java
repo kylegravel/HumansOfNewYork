@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -26,36 +27,35 @@ import javax.swing.table.TableModel;
 
 public class DisplayResultsFrame extends JFrame {
 	
-	// database URL
 	//static final String DATABASE_URL = "jdbc:derby:"; 
-	 ResultsPanel resultsPanel;
+	
 	 
 	 
 	  public DisplayResultsFrame()  {  
 	    	 
-		  setLayout(new BorderLayout());
-	      resultsPanel = new ResultsPanel();
+          setSize(600, 610);
+          setResizable(true);
+          //setLayout(new BorderLayout());
+		  
+          PicturePanel picturePanel = new PicturePanel();
+		  ResultsPanel resultsPanel = new ResultsPanel(picturePanel);
+		  	
+		  add(resultsPanel, BorderLayout.NORTH);
+		  add(picturePanel, BorderLayout.CENTER);
+		  	
+          setVisible(true);
+          setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       
 	      
-	            
 	        
 	      
-	 } 
+	 }
+	 
 	 
 	 public static void main( String args[] )  {
 		 
-		 SwingUtilities.invokeLater(new Runnable() {
-	         public void run() {
-	            JFrame fr = new JFrame("Humans of New York");
-	            // fr.setSize(1200, 1000);
-	            fr.setResizable(false);
-	            ResultsPanel resultsPanel = new ResultsPanel();
-	            // fr.setVisible(true);
-	            fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	            fr.add(resultsPanel);
-	            fr.pack(); //!! added 
-	            fr.setVisible(true); // !! moved
-	         }
-	      });
+		 new DisplayResultsFrame();
+		
 	   }
 	
 }

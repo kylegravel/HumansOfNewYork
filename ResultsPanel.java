@@ -1,11 +1,15 @@
 import java.awt.BorderLayout;
+//import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
-
-import javax.swing.ImageIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+//import java.sql.Array;
+import java.util.ArrayList;
+//import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
+//import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class ResultsPanel extends JPanel {
@@ -14,49 +18,95 @@ public class ResultsPanel extends JPanel {
 	public JComboBox<String> ageBox;
 	public JComboBox<String> emotionBox;
 	
-	private static Image image1;
+	private int MAX_NUM = 6;
+	private int MIN_NUM = 0;
+	//public int currNum = 0;
 	
+	final ArrayList<Image> slideshowPics = new ArrayList<Image>();
 	
-	public ResultsPanel() {
+	public ResultsPanel(final PicturePanel picturePanel) {
 			
-		
 		super.setLayout(new BorderLayout());
 		
-		//Example for infrastructure appearance 
-		image1 = new ImageIcon("images/exampleImage.jpg").getImage(); // get the image
+		
 		
 		//Handles JComboBoxes and Submit Button
-		JPanel resultsPanel = new JPanel();		
-		resultsPanel.setLayout(new GridLayout(2,3));
+		JPanel comboBoxPanel = new JPanel();		
+		comboBoxPanel.setLayout(new GridLayout(1,3));
 		
-		JPanel picturePanel = new JPanel();
+		JPanel controlPanel = new JPanel();
+
 		
 		genderBox = new JComboBox<String>(new String[] { "No Gender Filter" , "Male", "Female", "Self-Identified"  });	
 		ageBox = new JComboBox<String>(new String[] {"No Age Filter" , "0-10", "11-20", "21-30" , "31-40", "41-50" , "51-60" , "61-70" , "70+" });
 		emotionBox = new JComboBox<String>(new String[] {"No Emotion Filter" , "Happy", "Proud" , "Angry" , "Sad", "Lonely" , "Beautiful" , "Dissapointed" });
 		
-		JButton submitButton = new JButton("Submit");
+		//JButton submitButton = new JButton("Submit");
 		
 		JButton nextButton = new JButton("Next");
 		JButton prevButton = new JButton("Previous");
+				
+		comboBoxPanel.add(genderBox);
+		comboBoxPanel.add(ageBox);
+		comboBoxPanel.add(emotionBox);		
+		//resultsPanel.add(submitButton);
 		
-		//Image JButton -- no action listener
-		JButton imageIcon = new JButton();
-		imageIcon.setIcon(new ImageIcon(image1));
-		
-		resultsPanel.add(genderBox);
-		resultsPanel.add(ageBox);
-		resultsPanel.add(emotionBox);		
-		resultsPanel.add(submitButton);
-		
-		picturePanel.add(prevButton);
-		picturePanel.add(imageIcon);
-		picturePanel.add(nextButton);
+		controlPanel.add(prevButton);
+		controlPanel.add(nextButton);
 		
 		//Add resultsPanel and picturePanel to frame
-		add(resultsPanel, BorderLayout.NORTH);
-		add(picturePanel, BorderLayout.SOUTH);
+		add(comboBoxPanel, BorderLayout.NORTH);
+		add(controlPanel, BorderLayout.SOUTH);
 		
+		
+		 nextButton.addActionListener(
+	    		  new ActionListener() {	    			  
+	    			  	    			     	                    
+	    			  public void actionPerformed( ActionEvent e ) {
+	    	                                
+	    				 
+	    				
+	    				 if (picturePanel.getPicNum() <= MAX_NUM) {
+	    		                
+	    		                picturePanel.setPicNum(picturePanel.getPicNum() + 1);
+	    	                    picturePanel.getPicNum();
+	    	                    System.out.println(picturePanel.getPicNum());
+	    				 
+	    				 } if (picturePanel.getPicNum() == MAX_NUM) {
+	    					 
+	    					 	picturePanel.setPicNum(0);
+	    				 }
+	    				 
+	    				 picturePanel.repaint();
+	    	               
+	    			  }
+	    		  }// end anonymous inner class
+	    ); // end call to addActionListener
+		
+		 prevButton.addActionListener(
+	    		  new ActionListener() {	    			  
+	    			  	    			     	                    
+	    			  public void actionPerformed( ActionEvent e ) {	    	                                	    				 
+	    				
+	    				 if (picturePanel.getPicNum() > MIN_NUM) {
+	    		                
+	    		                picturePanel.setPicNum(picturePanel.getPicNum() - 1);
+	    	                    picturePanel.getPicNum();
+	    	                    System.out.println(picturePanel.getPicNum());
+	    				 
+	    				 } else if (picturePanel.getPicNum() == MIN_NUM) {
+	    					 
+	    					 	picturePanel.setPicNum(5);
+	    					 	
+	    					 	
+	    				 }
+	    				 
+	    				 picturePanel.repaint();
+	    	               
+	    			  }
+	    		  }// end anonymous inner class
+	    ); // end call to addActionListener
+		 
 	}
 	
 	
