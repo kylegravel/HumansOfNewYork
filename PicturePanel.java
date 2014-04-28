@@ -1,7 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -16,7 +15,7 @@ public class PicturePanel extends JPanel {
 	public PicturePanel() {
 		
 		//Add images to array<image>
-		slideshowPics.add(new ImageIcon("images/image1.jpg").getImage()); //Example image
+		slideshowPics.add(new ImageIcon("images/openingImage.jpg").getImage()); //Example image
 		slideshowPics.add(new ImageIcon("images/image2.jpg").getImage()); //Marriage Guy
 		slideshowPics.add(new ImageIcon("images/image3.jpg").getImage()); //Social Worker Female
 		slideshowPics.add(new ImageIcon("images/image4.jpg").getImage()); //Proud Father
