@@ -42,7 +42,7 @@ public class ResultsPanel extends JPanel
 
             preparedStatement = connection.prepareStatement(
                     "select image_file from people\n" +
-                    "    inner join age on people.person_id = emotion.person_id\n" +
+                    "    inner join age on people.person_id = age.person_id\n" +
                     "    inner join emotion on people.person_id = emotion.person_id\n" +
                     "    where age.lower_range = ?\n" +
                     "       and age.upper_range = ?\n" +
