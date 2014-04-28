@@ -1,4 +1,6 @@
 import java.awt.BorderLayout;
+import javax.swing.JFrame;
+/*
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
@@ -8,7 +10,6 @@ import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
@@ -23,6 +24,7 @@ import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.TableModel;
+*/
 
 public class DisplayResultsFrame extends JFrame {
 	
