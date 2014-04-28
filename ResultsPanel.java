@@ -32,7 +32,7 @@ public class ResultsPanel extends JPanel
         JPanel comboBoxPanel = new JPanel();
         comboBoxPanel.setLayout(new GridLayout(1, 3));
 
-        //Submit button
+        //picture panel
         JPanel arrayIndexPanel = new JPanel();
 
         //For next and previous buttons
