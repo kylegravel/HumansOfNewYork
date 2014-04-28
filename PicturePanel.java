@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 public class PicturePanel extends JPanel
 {
 
-    final ArrayList<Image> slideshowPics = new ArrayList<Image>();
+    ArrayList<Image> slideshowPics = new ArrayList<Image>();
 
     //Used to keep track of index
     private int currNum = 0;
@@ -25,6 +25,16 @@ public class PicturePanel extends JPanel
         slideshowPics.add(new ImageIcon("images/image6.jpg").getImage()); //Daughter who won't let go
 
 
+    }
+
+    public void clearPictures()
+    {
+        slideshowPics = new ArrayList<Image>();
+    }
+
+    public void addPictures(ArrayList<Image> pictures)
+    {
+        slideshowPics = pictures;
     }
 
     //Return current index number
@@ -44,7 +54,6 @@ public class PicturePanel extends JPanel
     // display image
     public void paintComponent(Graphics g)
     {
-
         super.paintComponent(g);
 
         // the following values are used to center the image

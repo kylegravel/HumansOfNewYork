@@ -3,28 +3,58 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.*;
 import java.util.ArrayList;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
+import javax.swing.*;
 
 public class ResultsPanel extends JPanel
 {
 
     //Instance Variables
-    public JComboBox<String> genderBox;
-    public JComboBox<String> ageBox;
-    public JComboBox<String> emotionBox;
+    public final JComboBox<String> genderBox;
+    public final JComboBox<String> ageBox;
+    public final JComboBox<String> emotionBox;
+
+    JOptionPane JOptionPane;
 
     private int MAX_NUM = 6;    //Represents max images for slide show
     private int MIN_NUM = 0;
 
-    //Array of images
-    final ArrayList<Image> slideshowPics = new ArrayList<Image>();
+    private String filterGender;
+    private int filterAgeLowerRange;
+    private int filterAgeUpperRange;
+    private String filterEmotion;
+
+    private Connection connection;
+    private PreparedStatement preparedStatement;
+    private Statement statement;
+    private ResultSet resultSet;
+    private ResultSetMetaData metaData;
+
+    private boolean connected = false;
 
     public ResultsPanel(final PicturePanel picturePanel)
     {
+        // create connection to database
+        try {
+            connection = DriverManager.getConnection("jdbc:derby:humans", null, null);
+            connected = true;
+
+            preparedStatement = connection.prepareStatement(
+                    "select image_file from people\n" +
+                    "    inner join age on people.person_id = emotion.person_id\n" +
+                    "    inner join emotion on people.person_id = emotion.person_id\n" +
+                    "    where age.lower_range = ?\n" +
+                    "       and age.upper_range = ?\n" +
+                    "       and people.gender = ?\n" +
+                    "       and emotion.short_desc = ?");
+        } catch (SQLException e) {
+
+            JOptionPane.showMessageDialog(null,
+                                          e.getMessage(), "Database error",
+                                          JOptionPane.ERROR_MESSAGE);
+            disconnect();
+        }
 
         super.setLayout(new BorderLayout());
 
@@ -41,7 +71,7 @@ public class ResultsPanel extends JPanel
         //3 comboboxes for data tables
         genderBox = new JComboBox<String>(new String[]{"No Gender Filter", "Male", "Female", "Self-Identified"});
         ageBox = new JComboBox<String>(new String[]{"No Age Filter", "0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "70+"});
-        emotionBox = new JComboBox<String>(new String[]{"No Emotion Filter", "Happy", "Proud", "Angry", "Sad", "Lonely", "Beautiful", "Dissapointed"});
+        emotionBox = new JComboBox<String>(new String[]{"No Emotion Filter", "Happy", "Angry", "Sad", "Ambiguous"});
 
         //JButton submitButton = new JButton("Submit");
 
@@ -66,6 +96,31 @@ public class ResultsPanel extends JPanel
         add(comboBoxPanel, BorderLayout.NORTH);
         add(controlPanel, BorderLayout.CENTER);
         add(arrayIndexPanel, BorderLayout.SOUTH);
+
+        genderBox.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e)
+           {
+               filterGender = (String) genderBox.getSelectedItem();
+
+               updatePictures();
+           }
+        });
+
+        ageBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                String filterAgeString = (String) ageBox.getSelectedItem();
+                filterAgeLowerRange = 0;
+                updatePictures();
+            }
+        });
+
+        emotionBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                updatePictures();
+            }
+        });
 
         //Handles actionlistener for nextButton
         nextButton.addActionListener(new ActionListener()
@@ -124,6 +179,22 @@ public class ResultsPanel extends JPanel
             }
         } ); // end call to addActionListener
 
+    }
+
+    private void updatePictures()
+    {
+
+    }
+
+    private void disconnect()
+    {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connected = false;
+        }
     }
 
 

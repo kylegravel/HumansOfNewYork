@@ -3,9 +3,6 @@ import javax.swing.JFrame;
 
 public class DisplayResultsFrame extends JFrame
 {
-
-    //static final String DATABASE_URL = "jdbc:derby:";
-
     public DisplayResultsFrame()
     {
 
