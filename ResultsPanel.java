@@ -17,17 +17,19 @@ public class ResultsPanel extends JPanel
 
     JOptionPane JOptionPane;
 
+    final PicturePanel picturePanel;
+
     private int MAX_NUM = 6;    //Represents max images for slide show
     private int MIN_NUM = 0;
 
     private String filterGender;
-    private int filterAgeLowerRange;
-    private int filterAgeUpperRange;
+    private String filterAge;
     private String filterEmotion;
+
+    private int numberOfPictures = 0;
 
     private Connection connection;
     private PreparedStatement preparedStatement;
-    private Statement statement;
     private ResultSet resultSet;
     private ResultSetMetaData metaData;
 
@@ -35,24 +37,25 @@ public class ResultsPanel extends JPanel
 
     public ResultsPanel(final PicturePanel picturePanel)
     {
+        this.picturePanel = picturePanel;
+
         // create connection to database
         try {
             connection = DriverManager.getConnection("jdbc:derby:humans", null, null);
             connected = true;
 
-            preparedStatement = connection.prepareStatement(
-                    "select image_file from people\n" +
-                    "    inner join age on people.person_id = age.person_id\n" +
-                    "    inner join emotion on people.person_id = emotion.person_id\n" +
-                    "    where age.lower_range = ?\n" +
-                    "       and age.upper_range = ?\n" +
-                    "       and people.gender = ?\n" +
-                    "       and emotion.short_desc = ?");
-        } catch (SQLException e) {
 
+
+            filterAge = "0-10";
+            filterGender = "Female";
+            filterEmotion = "Ambiguous";
+            runSQL();
+            updatePictures();
+
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null,
-                                          e.getMessage(), "Database error",
-                                          JOptionPane.ERROR_MESSAGE);
+                e.getMessage(), "Database error",
+                JOptionPane.ERROR_MESSAGE);
             disconnect();
         }
 
@@ -69,16 +72,16 @@ public class ResultsPanel extends JPanel
         JPanel controlPanel = new JPanel();
 
         //3 comboboxes for data tables
-        genderBox = new JComboBox<String>(new String[]{"No Gender Filter", "Male", "Female", "Self-Identified"});
-        ageBox = new JComboBox<String>(new String[]{"No Age Filter", "0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "70+"});
-        emotionBox = new JComboBox<String>(new String[]{"No Emotion Filter", "Happy", "Angry", "Sad", "Ambiguous"});
+        genderBox = new JComboBox<String>(new String[]{"Male", "Female", "Ambiguous"});
+        ageBox = new JComboBox<String>(new String[]{"0-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "70+"});
+        emotionBox = new JComboBox<String>(new String[]{"Happy", "Angry", "Sad", "Ambiguous"});
 
         //JButton submitButton = new JButton("Submit");
 
         JButton nextButton = new JButton("Next");
         JButton prevButton = new JButton("Previous");
 
-        final JLabel arrayNum = new JLabel("Picture Number: 1" + "     " + " Out Of: " + MAX_NUM);
+        final JLabel arrayNum = new JLabel("Picture Number: 1" + "     " + " Out Of: " + numberOfPictures);
 
         //Add 3 comboboxes to combobox panel
         comboBoxPanel.add(genderBox);
@@ -102,23 +105,50 @@ public class ResultsPanel extends JPanel
            {
                filterGender = (String) genderBox.getSelectedItem();
 
-               updatePictures();
+               try {
+                   runSQL();
+                   updatePictures();
+               } catch (SQLException ex) {
+                   JOptionPane.showMessageDialog(null,
+                                                 ex.getMessage(), "Database error",
+                                                 JOptionPane.ERROR_MESSAGE);
+               }
+
+
            }
         });
 
         ageBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
-                String filterAgeString = (String) ageBox.getSelectedItem();
-                filterAgeLowerRange = 0;
-                updatePictures();
+                filterAge = (String) ageBox.getSelectedItem();
+
+                try {
+                    runSQL();
+                    updatePictures();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null,
+                                                  ex.getMessage(), "Database error",
+                                                  JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
         emotionBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
-                updatePictures();
+                filterEmotion = (String) emotionBox.getSelectedItem();
+
+                try {
+                    runSQL();
+                    updatePictures();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null,
+                                                  ex.getMessage(), "Database error",
+                                                  JOptionPane.ERROR_MESSAGE);
+                }
+
+
             }
         });
 
@@ -130,19 +160,19 @@ public class ResultsPanel extends JPanel
             {
 
                 //If another picture is in slide show before the end
-                if (picturePanel.getPicNum() <= MAX_NUM) {
+                if (picturePanel.getPicNum() <= numberOfPictures) {
 
                     //Set array number to currNum + 1
                     picturePanel.setPicNum(picturePanel.getPicNum() + 1);
-                    arrayNum.setText("Picture Number: " + (picturePanel.getPicNum() + 1) + "     " + " Out Of: " + MAX_NUM);
+                    arrayNum.setText("Picture Number: " + (picturePanel.getPicNum() + 1) + "     " + " Out Of: " + numberOfPictures);
                     picturePanel.getPicNum();    //For debugging purposes
                     System.out.println(picturePanel.getPicNum());    //For debugging purposes
                     //If reached last image in array
                 }
-                if (picturePanel.getPicNum() == MAX_NUM) {
+                if (picturePanel.getPicNum() == numberOfPictures) {
                     //set back to first image
                     picturePanel.setPicNum(MIN_NUM);
-                    arrayNum.setText("Picture Number: 1" + "     " + " Out Of: " + MAX_NUM);
+                    arrayNum.setText("Picture Number: 1" + "     " + " Out Of: " + numberOfPictures);
                 }
 
                 picturePanel.repaint();  //Refresh images
@@ -161,14 +191,14 @@ public class ResultsPanel extends JPanel
                 if (picturePanel.getPicNum() > MIN_NUM) {
 
                     picturePanel.setPicNum(picturePanel.getPicNum() - 1);
-                    arrayNum.setText("Picture Number: " + (picturePanel.getPicNum() + 1) + "     " + " Out Of: " + MAX_NUM);
+                    arrayNum.setText("Picture Number: " + (picturePanel.getPicNum() + 1) + "     " + " Out Of: " + numberOfPictures);
                     picturePanel.getPicNum();
-                    System.out.println(picturePanel.getPicNum());
+
                     //if first image in array
                 } else if (picturePanel.getPicNum() == MIN_NUM) {
 
-                    picturePanel.setPicNum(MAX_NUM - 1);
-                    arrayNum.setText("Picture Number: " + MAX_NUM + "     " + " Out Of: " + MAX_NUM);
+                    picturePanel.setPicNum(numberOfPictures - 1);
+                    arrayNum.setText("Picture Number: " + numberOfPictures + "     " + " Out Of: " + numberOfPictures);
 
 
                 }
@@ -181,14 +211,52 @@ public class ResultsPanel extends JPanel
 
     }
 
-    private void updatePictures()
-    {
+    private void runSQL() throws SQLException {
+        System.out.println(filterAge + " " + filterGender + " " + filterEmotion);
 
+        preparedStatement = connection.prepareStatement(
+                "select image_file from people\n" +
+                "    inner join age on people.person_id = age.person_id\n" +
+                "    inner join emotion on people.person_id = emotion.person_id\n" +
+                "    where age.age_range = ?\n" +
+                "       and people.gender = ?\n" +
+                "       and emotion.short_desc = ?",
+                ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_READ_ONLY);
+
+        preparedStatement.setString(1, filterAge);
+        preparedStatement.setString(2, filterGender);
+        preparedStatement.setString(3, filterEmotion);
+        resultSet = preparedStatement.executeQuery();
+        metaData = resultSet.getMetaData();
+    }
+
+    private void updatePictures() throws SQLException
+    {
+        ArrayList<String> imageStrings = new ArrayList<String>();
+
+        if (resultSet.next()) {
+            resultSet.first();
+
+            do {
+                System.out.println("images/" + resultSet.getString("image_file"));
+                imageStrings.add("images/" + resultSet.getString("image_file"));
+            } while (resultSet.next());
+        }
+
+        picturePanel.clearPictures();
+        picturePanel.addPictures(imageStrings);
+
+        resultSet.last();
+        numberOfPictures = resultSet.getRow() + 1;
+
+        picturePanel.repaint();
     }
 
     private void disconnect()
     {
         try {
+            preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();

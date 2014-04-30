@@ -32,9 +32,14 @@ public class PicturePanel extends JPanel
         slideshowPics = new ArrayList<Image>();
     }
 
-    public void addPictures(ArrayList<Image> pictures)
+    public void addPictures(ArrayList<String> pictures)
     {
-        slideshowPics = pictures;
+        slideshowPics.add(new ImageIcon("images/openingImage.jpg").getImage());
+        for (String s : pictures) {
+            slideshowPics.add(new ImageIcon(s).getImage());
+        }
+
+        currNum = 0;
     }
 
     //Return current index number
@@ -67,3 +72,4 @@ public class PicturePanel extends JPanel
                     (int) (slideshowPics.get(currNum).getHeight(null)), this);
     }
 }
+
