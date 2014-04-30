@@ -108,6 +108,7 @@ public class ResultsPanel extends JPanel
                try {
                    runSQL();
                    updatePictures();
+                   arrayNum.setText("Picture Number: " + (picturePanel.getPicNum()+1) + "     " + " Out Of: " + numberOfPictures);
                } catch (SQLException ex) {
                    JOptionPane.showMessageDialog(null,
                                                  ex.getMessage(), "Database error",
@@ -126,6 +127,7 @@ public class ResultsPanel extends JPanel
                 try {
                     runSQL();
                     updatePictures();
+                    arrayNum.setText("Picture Number: " + (picturePanel.getPicNum()+1) + "     " + " Out Of: " + numberOfPictures);
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null,
                                                   ex.getMessage(), "Database error",
@@ -142,6 +144,7 @@ public class ResultsPanel extends JPanel
                 try {
                     runSQL();
                     updatePictures();
+                    arrayNum.setText("Picture Number: " + (picturePanel.getPicNum()+1) + "     " + " Out Of: " + numberOfPictures);
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null,
                                                   ex.getMessage(), "Database error",
@@ -251,6 +254,7 @@ public class ResultsPanel extends JPanel
         numberOfPictures = resultSet.getRow() + 1;
 
         picturePanel.repaint();
+
     }
 
     private void disconnect()
