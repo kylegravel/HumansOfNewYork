@@ -240,9 +240,7 @@ public class ResultsPanel extends JPanel
 
         if (resultSet.next()) {
             resultSet.first();
-
             do {
-                System.out.println("images/" + resultSet.getString("image_file"));
                 imageStrings.add("images/" + resultSet.getString("image_file"));
             } while (resultSet.next());
         }
